@@ -1,0 +1,47 @@
+name: Test Permissions
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - "*"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  permissions:
+    runs-on:
+      - namespace-profile-niklas-testing
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: 6.x.x
+
+      - name: Install Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 12.x
+
+      - name: Install Doppler CLI
+        uses: dopplerhq/cli-action@v2
+
+      - id: pnpm-store-path
+        name: Get pnpm store directory
+        shell: bash
+        run: echo "store-path=$(pnpm store path | tr -d '\n')" >> $GITHUB_OUTPUT
+  
+      - name: Setup Namespace pnpm cache
+        uses: ./ # Uses an action in the root directory
+        with:
+          path: |
+            ${{ steps.pnpm-store-path.outputs.store-path }}
+            ./**/node_modules
+    
+  

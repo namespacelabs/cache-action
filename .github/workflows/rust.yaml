@@ -16,7 +16,7 @@ permissions:
 jobs:
   rust:
     runs-on:
-      - namespace-profile-e2e-small
+      - namespace-profile-niklas-testing
     steps:
       - uses: actions/checkout@v4
       - name: Setup Rust cache
